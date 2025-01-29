@@ -96,5 +96,5 @@ jobs:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            📋 Published Playwright: https://danericnetwork.github.io/playwright-pages-test/$HTML_REPORT_URL_PATH
+            📋 Published Playwright Report: https://danericnetwork.github.io/playwright-pages-test/${{ env.HTML_REPORT_URL_PATH }}
           edit-mode: replace
