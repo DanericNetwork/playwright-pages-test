@@ -83,8 +83,8 @@ jobs:
           FULL_HTML_REPORT_URL=https://danericnetwork.github.io/playwright-pages-test/$HTML_REPORT_URL_PATH
 
           echo "::notice title=📋 Published Playwright Test Report::$FULL_HTML_REPORT_URL"
-          - name: Find Comment
-      - uses: peter-evans/find-comment@v3
+      - name: Find Comment
+        uses: peter-evans/find-comment@v3
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
