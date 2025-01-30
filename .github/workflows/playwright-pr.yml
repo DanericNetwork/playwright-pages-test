@@ -1,12 +1,12 @@
-name: Playwright Tests
+name: Playwright Test
 on:
-  push:
-    branches: [main, master]
-  # pull_request:
-  #   branches: [main, master]
+  pull_request:
+    branches:
+      - master
+
 jobs:
   test:
-    timeout-minutes: 60
+    name: Run playwright tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,9 +17,14 @@ jobs:
         run: npm install -g yarn && yarn
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
-      - name: Run Playwright tests
-        run: yarn playwright test
-      - name: Report results
+      - name: Run playwright tests
+        run: PLAYWRIGHT_JSON_OUTPUT_NAME=results.json npx playwright test --reporter=json,html
+      - name: Report results to PR comment
+        uses: daun/playwright-report-summary@v3
+        if: always()
+        with:
+          report-file: results.json
+      - name: Report results to GitHub Actions
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -78,3 +83,18 @@ jobs:
           FULL_HTML_REPORT_URL=https://danericnetwork.github.io/playwright-pages-test/$HTML_REPORT_URL_PATH
 
           echo "::notice title=📋 Published Playwright Test Report::$FULL_HTML_REPORT_URL"
+      - name: Find Comment
+        uses: peter-evans/find-comment@v3
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 📋 Published Playwright
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            📋 Published Playwright Report: https://danericnetwork.github.io/playwright-pages-test/${{ env.HTML_REPORT_URL_PATH }}
+          edit-mode: replace
