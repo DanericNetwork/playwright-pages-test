@@ -74,6 +74,6 @@ jobs:
           done
       - name: Output Report URL as Worfklow Annotation
         run: |
-          FULL_HTML_REPORT_URL=https://danericnetwork.github.io/playwright-pages-test/$HTML_REPORT_URL_PATH
+          FULL_HTML_REPORT_URL=https://playwright.daneric.top/$HTML_REPORT_URL_PATH
 
           echo "::notice title=📋 Published Playwright Test Report::$FULL_HTML_REPORT_URL"
