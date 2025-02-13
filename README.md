@@ -1,2 +1,2 @@
 # playwright-pages-test
-test
+test 2
