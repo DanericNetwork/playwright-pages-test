@@ -1,21 +1,35 @@
-name: Playwright Tests
+name: Playwright Tests With Report
 on:
   push:
     branches: [develop, main, master]
-    
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Temp fix for https://github.com/nodejs/corepack/issues/612
+      - name: Install latest corepack
+        run: npm install -g corepack@latest
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version-file: "package.json"
+          cache: "pnpm"
+
       - name: Install dependencies
-        run: npm install -g yarn && yarn
+        run: pnpm install
+
       - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps
+        run: pnpm dlx playwright@1.49.0 install --with-deps
+
       - name: Run Playwright tests
         run: yarn playwright test
       - name: Report results
@@ -35,7 +49,7 @@ jobs:
     continue-on-error: true
     env:
       # Unique URL path for each workflow run attempt
-      HTML_REPORT_URL_PATH: reports/${{ github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}
+      HTML_REPORT_URL_PATH: reports/${{ github.ref }}
     steps:
       - name: Checkout GitHub Pages Branch
         uses: actions/checkout@v4
