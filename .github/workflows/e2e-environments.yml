@@ -28,10 +28,11 @@ jobs:
         run: pnpm install
 
       - name: Install Playwright Browsers
-        run: pnpm dlx playwright@1.49.0 install --with-deps
+        run: pnpm exec playwright install --with-deps
 
       - name: Run Playwright tests
         run: pnpm playwright test
+        
       - name: Report results
         uses: actions/upload-artifact@v4
         if: always()
